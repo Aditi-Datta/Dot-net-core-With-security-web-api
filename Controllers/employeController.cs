@@ -17,16 +17,59 @@ namespace webapisolution.Controllers
             _employeeRepository = employeeRepository;
         }
 
+    
+
         [HttpGet]
         [Route("getAllEmployes")]
-        public JsonResult GetEmployes()
+        public async Task<ActionResult<MessageStatus>> GetEmployes()
         {
-            List<Employee> employes = _employeeRepository.GetAllEmployees();
-            return new JsonResult(employes);
+            try
+            {
+                var employees = _employeeRepository.GetAllEmployees();
+                if (employees != null && employees.Any())
+                {
+                    var res = new MessageStatus
+                    {
+                        Message = "Data retrieved successfully.",
+                        Status = true,
+                        Data = employees,
+                        Code = 200,
+
+                    };
+
+                    return Ok(res); // Return 200 OK with response object
+
+                }
+                else
+                {
+                    var messageStatus = new MessageStatus
+                    {
+                        Data = null,
+                        Status = false,
+                        Code = 404,
+                        Message = "No data found"
+                    };
+
+                    return NotFound(messageStatus); // Return 404 Not Found with message status object
+                }
+            }
+            catch (Exception ex)
+            {
+                var errorStatus = new MessageStatus
+                {
+                    Data = null,
+                    Status = false,
+                    Code = 500,
+                    Message = ex.Message
+                };
+
+                return StatusCode((int)HttpStatusCode.InternalServerError, errorStatus); // Return 500 Internal Server Error with message status object
+            }
+
         }
 
 
-  
+
 
 
         [HttpGet]
