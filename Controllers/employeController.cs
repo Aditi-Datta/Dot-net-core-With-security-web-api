@@ -26,10 +26,19 @@ namespace webapisolution.Controllers
 
 
         [HttpGet]
-        [Route("getAllEmployesbyId")]
-        public JsonResult SearchStudentNameById(int studentId)
+        [Route("SearchStudentNameById")]
+        public JsonResult SearchStudentNById(int studentId)
         {
             List<Employee> employes = _employeeRepository.SearchStudentNameById(studentId);
+            return new JsonResult(employes);
+        }
+
+
+        [HttpDelete]
+        [Route("DeleteStudentById")]
+        public JsonResult DeleteStudentById(int studentId)
+        {
+            List<Employee> employes = _employeeRepository.DeleteStudentById(studentId);
             return new JsonResult(employes);
         }
 

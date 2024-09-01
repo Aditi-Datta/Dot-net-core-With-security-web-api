@@ -7,5 +7,8 @@ namespace webapisolution.Repositories
     {
         List<Employee> GetAllEmployees();
         List<Employee>SearchStudentNameById (int studentId);
+
+        List<Employee> DeleteStudentById(int studentId);
+
     }
 }

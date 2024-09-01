@@ -84,6 +84,41 @@ namespace webapisolution.Repositories
 
 
 
+        public List<Employee> DeleteStudentById(int studentId)
+        {
+            List<Employee> employees = new List<Employee>();
+            using (SqlConnection conn = new SqlConnection(_connectionString))
+            {
+                conn.Open();
+                using (SqlCommand cmd = conn.CreateCommand())
+                {
+                    cmd.CommandText = "dbo.DeleteStudentById"; // Assuming this is a stored procedure name
+                    cmd.CommandType = CommandType.StoredProcedure;
+
+                    // Adding the studentId as a parameter to the stored procedure
+                    cmd.Parameters.AddWithValue("@StudentId", studentId);
+
+                    using (SqlDataReader reader = cmd.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            Employee employee = new Employee
+                            {
+                                EmployeeId = reader.GetInt32(reader.GetOrdinal("stuId")),
+                                FirstName = reader.GetString(reader.GetOrdinal("stuName")),
+                                cgpa = reader.GetString(reader.GetOrdinal("result"))
+                            };
+
+                            employees.Add(employee);
+                        }
+                    }
+                }
+            }
+            return employees;
+        }
+
+
+
 
 
 
