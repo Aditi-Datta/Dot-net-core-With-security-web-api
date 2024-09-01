@@ -23,5 +23,16 @@ namespace webapisolution.Controllers
             List<Employee> employes = _employeeRepository.GetAllEmployees();
             return new JsonResult(employes);
         }
+
+
+        [HttpGet]
+        [Route("getAllEmployesbyId")]
+        public JsonResult SearchStudentNameById(int studentId)
+        {
+            List<Employee> employes = _employeeRepository.SearchStudentNameById(studentId);
+            return new JsonResult(employes);
+        }
+
+
     }
 }
