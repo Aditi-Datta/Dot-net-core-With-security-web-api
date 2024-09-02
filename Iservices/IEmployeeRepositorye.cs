@@ -9,6 +9,8 @@ namespace webapisolution.Repositories
         List<Employee>SearchStudentNameById (int studentId);
 
         List<Employee> DeleteStudentById(int studentId);
+        List<Student> InsertStudentInfo(Student student);
+
 
     }
 }

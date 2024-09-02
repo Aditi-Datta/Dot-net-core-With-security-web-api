@@ -8,6 +8,12 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddScoped<IEmployeeRepository, EmployeeRepository>();
 
+
+// Optional: Configure logging
+builder.Logging.ClearProviders();  // Clear default logging providers
+builder.Logging.AddConsole();      // Add Console logging
+builder.Logging.AddDebug();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
