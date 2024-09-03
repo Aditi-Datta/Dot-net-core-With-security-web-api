@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System.Collections.Generic;
 using System.Net;
@@ -26,6 +27,7 @@ namespace webapisolution.Controllers
 
         [HttpGet]
         [Route("getAllEmployes")]
+        [Authorize]
         public async Task<ActionResult<MessageStatus>> GetEmployes()
         {
             try
