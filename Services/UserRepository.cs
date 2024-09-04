@@ -2,6 +2,8 @@
 using System.Data;
 using webapisolution.Models;
 using Microsoft.Extensions.Logging;
+using System.Security.Cryptography;
+using System.Text;
 
 namespace webapisolution.Repositories
 {
@@ -20,6 +22,8 @@ namespace webapisolution.Repositories
         {
             try
             {
+                string hashedPassword = HashPassword(password);
+
                 using (SqlConnection conn = new SqlConnection(_connectionString))
                 {
                     conn.Open();
@@ -31,7 +35,7 @@ namespace webapisolution.Repositories
                         cmd.CommandType = CommandType.StoredProcedure;
 
                         cmd.Parameters.AddWithValue("@Username", username);
-                        cmd.Parameters.AddWithValue("@Password", password); // Adjust to match stored procedure parameter
+                        cmd.Parameters.AddWithValue("@password", hashedPassword);
 
                         _logger.LogInformation("Executing stored procedure sp_ValidateUser.");
 
@@ -58,6 +62,20 @@ namespace webapisolution.Repositories
                 _logger.LogError(ex, "Error validating user");
             }
             return null;
+        }
+
+        private string HashPassword(string password)
+        {
+            using (SHA256 sha256 = SHA256.Create())
+            {
+                byte[] bytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(password));
+                StringBuilder builder = new StringBuilder();
+                for (int i = 0; i < bytes.Length; i++)
+                {
+                    builder.Append(bytes[i].ToString("x2"));
+                }
+                return builder.ToString();
+            }
         }
     }
 }
