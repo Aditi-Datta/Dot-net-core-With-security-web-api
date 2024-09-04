@@ -2,6 +2,7 @@
 using webapisolution.Models;
 using webapisolution.Services;
 using webapisolution.Repositories;
+using System.Threading.Tasks;
 
 namespace webapisolution.Controllers
 {
@@ -19,26 +20,70 @@ namespace webapisolution.Controllers
         }
 
         [HttpPost("login")]
-        public IActionResult Login([FromBody] LoginModel model)
+        public async Task<MessageStatus> Login([FromBody] LoginModel model)
         {
-            if (model == null || string.IsNullOrEmpty(model.Username) || string.IsNullOrEmpty(model.Password))
-            {
-                return BadRequest("Username and password are required.");
-            }
+            var messegeStatus = new MessageStatus();
 
-            var user = _userRepository.ValidateUser(model.Username, model.Password);
-            if (user != null)
+            try
             {
-                var token = _tokenService.GenerateToken(user.Username);
-                return Ok(new
+                if (model == null || string.IsNullOrEmpty(model.Username) || string.IsNullOrEmpty(model.Password))
                 {
-                    Token = token,
-                    FullName = user.FullName,
-                    IsActive = user.IsActive
-                });
+                    return new MessageStatus
+                    {
+                        Status = false,
+                        Code = 400, // Bad Request
+                        Message = "Username and password are required."
+                    };
+                }
+
+                // Retrieve user info
+                var user = _userRepository.ValidateUser(model.Username, model.Password);
+
+                if (user != null)
+                {
+                    // Generate token
+                    var token = _tokenService.GenerateToken(user.Username);
+
+                    // Return success message
+                    messegeStatus = new MessageStatus
+                    {
+                        Data = new
+                        {
+                            Token = token,
+                            FullName = user.FullName,
+                            IsActive = user.IsActive,
+                            email=user.Email,
+                        },
+                        Status = true,
+                        Code = 200, // OK
+                        Message = "Successfully Logged In"
+                    };
+                }
+                else
+                {
+                    // User not found or invalid credentials
+                    messegeStatus = new MessageStatus
+                    {
+                        Status = false,
+                        Code = 401, // Unauthorized
+                        Message = "Invalid username or password."
+                    };
+                }
+            }
+            catch (Exception ex)
+            {
+                // Log the exception details for debugging
+                // _logger.LogError(ex, "An error occurred during login.");
+
+                messegeStatus = new MessageStatus
+                {
+                    Status = false,
+                    Code = 500, // Internal Server Error
+                    Message = "An error occurred during login."
+                };
             }
 
-            return Unauthorized("Invalid username or password.");
+            return messegeStatus;
         }
     }
 }
