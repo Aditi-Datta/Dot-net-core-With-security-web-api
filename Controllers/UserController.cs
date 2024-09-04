@@ -33,6 +33,6 @@ public class UserController : ControllerBase
 
         var token = _tokenService.GenerateToken(user.Username);
 
-        return Ok(new { Token = token });
+        return Ok(new { Token = token, user=user.Username });
     }
 }

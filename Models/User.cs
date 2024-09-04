@@ -3,9 +3,9 @@
     public class User
     {
         public string Username { get; set; }
-
-        public string password { get; set; }
-
-        // You can add more properties if needed
+        public string Email { get; set; }
+        public bool IsActive { get; set; }
+        public string FullName { get; set; }  // Ensure this matches your table schema
     }
+
 }

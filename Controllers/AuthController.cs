@@ -30,7 +30,12 @@ namespace webapisolution.Controllers
             if (user != null)
             {
                 var token = _tokenService.GenerateToken(user.Username);
-                return Ok(new { Token = token });
+                return Ok(new
+                {
+                    Token = token,
+                    FullName = user.FullName,
+                    IsActive = user.IsActive
+                });
             }
 
             return Unauthorized("Invalid username or password.");

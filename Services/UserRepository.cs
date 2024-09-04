@@ -27,7 +27,6 @@ namespace webapisolution.Repositories
                 using (SqlConnection conn = new SqlConnection(_connectionString))
                 {
                     conn.Open();
-                    _logger.LogInformation("Database connection opened.");
 
                     using (SqlCommand cmd = conn.CreateCommand())
                     {
@@ -35,23 +34,19 @@ namespace webapisolution.Repositories
                         cmd.CommandType = CommandType.StoredProcedure;
 
                         cmd.Parameters.AddWithValue("@Username", username);
-                        cmd.Parameters.AddWithValue("@password", hashedPassword);
-
-                        _logger.LogInformation("Executing stored procedure sp_ValidateUser.");
+                        cmd.Parameters.AddWithValue("@Password", hashedPassword);
 
                         using (SqlDataReader reader = cmd.ExecuteReader())
                         {
                             if (reader.Read())
                             {
-                                _logger.LogInformation("User found in the database.");
                                 return new User
                                 {
-                                    Username = reader["Username"].ToString()
+                                    Username = reader["Username"].ToString(),
+                                    Email = reader["Email"].ToString(),
+                                    IsActive = (bool)reader["IsActive"],
+                                    FullName = reader["FullName"].ToString() // Ensure FullName exists in the SELECT query
                                 };
-                            }
-                            else
-                            {
-                                _logger.LogWarning("No user found with the provided credentials.");
                             }
                         }
                     }
