@@ -1,5 +1,4 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using webapisolution.Models;
@@ -10,6 +9,10 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllers();
+
+// Configure Swagger services
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();  // Ensure this line is present
 
 // Configure JWT settings
 var jwtSettings = new JwtSettings();
@@ -39,10 +42,8 @@ builder.Services.AddAuthentication(options =>
     };
 });
 
-// Add other services
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
-builder.Services.AddScoped<IEmployeeRepository, EmployeeRepository>();
+// Register the UserRepository
+builder.Services.AddScoped<IUserRepository, UserRepository>();
 
 // Optional: Configure logging
 builder.Logging.ClearProviders();
@@ -54,8 +55,8 @@ var app = builder.Build();
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
-    app.UseSwagger();
-    app.UseSwaggerUI();
+    app.UseSwagger();            // Ensure this line is present
+    app.UseSwaggerUI();          // Ensure this line is present
 }
 
 app.UseHttpsRedirection();

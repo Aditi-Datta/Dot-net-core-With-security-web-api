@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using webapisolution.Models;
 using webapisolution.Services;
+using webapisolution.Repositories;
 
 namespace webapisolution.Controllers
 {
@@ -9,30 +10,30 @@ namespace webapisolution.Controllers
     public class AuthController : ControllerBase
     {
         private readonly TokenService _tokenService;
+        private readonly IUserRepository _userRepository;
 
-        public AuthController(TokenService tokenService)
+        public AuthController(TokenService tokenService, IUserRepository userRepository)
         {
             _tokenService = tokenService;
+            _userRepository = userRepository;
         }
 
         [HttpPost("login")]
         public IActionResult Login([FromBody] LoginModel model)
         {
-            // Validate user credentials (replace with your actual validation logic)
-            if (IsValidUser(model.Username, model.Password))
+            if (model == null || string.IsNullOrEmpty(model.Username) || string.IsNullOrEmpty(model.Password))
             {
-                // Generate token
-                var token = _tokenService.GenerateToken(model.Username);
+                return BadRequest("Username and password are required.");
+            }
+
+            var user = _userRepository.ValidateUser(model.Username, model.Password);
+            if (user != null)
+            {
+                var token = _tokenService.GenerateToken(user.Username);
                 return Ok(new { Token = token });
             }
 
             return Unauthorized("Invalid username or password.");
-        }
-
-        private bool IsValidUser(string username, string password)
-        {
-            // Replace with your actual user validation logic (e.g., check against a database)
-            return username == "testuser" && password == "testpassword";
         }
     }
 }

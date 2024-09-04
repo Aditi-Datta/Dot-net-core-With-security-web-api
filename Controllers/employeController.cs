@@ -27,7 +27,7 @@ namespace webapisolution.Controllers
 
         [HttpGet]
         [Route("getAllEmployes")]
-        [Authorize]
+      //  [Authorize]
         public async Task<ActionResult<MessageStatus>> GetEmployes()
         {
             try
